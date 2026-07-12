@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <title>Login</title>
+</head>
+
+<body class="flex min-h-screen flex-col items-center justify-center bg-[#2A2D2F] p-6">
+  <div class="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-[#397367] shadow-2xl">
+
+    <div class="px-8 pt-8 pb-6 text-center">
+      <h3 class="text-3xl font-bold tracking-tight text-white">Welcome Back</h3>
+      <p class="mt-2 text-sm text-white/70">Please enter your details to login</p>
+    </div>
+
+    <!--Messages Section-->
+    <div id="messages-list" class="fixed top-6 right-6 z-50 flex flex-col items-end gap-3 pointer-events-none">
+      {% if messages %} {% for message in messages %}
+      <div class="django-message pointer-events-auto relative overflow-hidden flex items-center justify-between px-4 py-4 rounded-xl shadow-2xl text-white text-sm font-semibold border border-white/10 transition-all 
+      {% if message.tags == 'error' %} bg-[#f3505e] {% else %} bg-[#66bd7b] {% endif %}"
+      role="alert">
+
+        <div class="flex items-center gap-3 pr-4">
+          {% if message.tags == 'error' %}
+          <i class="fa-solid fa-circle-exclamation text-lg"></i>
+          {% else %}
+          <i class="fa-solid fa-circle-check text-lg"></i>
+          {% endif %}
+          <span>{{ message }}</span>
+        </div>
+
+        <!-- Optional: Simple X to close (Manual) -->
+        <button onclick="dismissMessage(this.closest('.django-message'))" class="shrink-0 p-1 hover:bg-black/10 rounded-full transition">
+          <i class="fa-solid fa-xmark text-lg cursor-pointer"></i>
+        </button>
+        <!--dismissMessage(this.closest('.django-message'))-->
+
+        <!-- Progress Bar -->
+        <div class="absolute bottom-0 left-0 h-1 bg-white/30 animate-progress"></div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    <form action="/api/v1/login/" method="POST" class="space-y-5 px-8 pb-8">
+      {% csrf_token %}
+
+      <fieldset class="space-y-5">
+
+        <!--Username-->
+        <div>
+          <label for="username"
+            class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Username</label>
+          <input type="text" id="username" name="username"
+            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-white/30 transition shadow-inner"
+            required>
+        </div>
+
+        <!--Password-->
+        <div>
+          <label for="password"
+            class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Password</label>
+          <div class="relative group">
+            <input type="password" id="password" name="password"
+              class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-whiite/30 transition shadow-inner"
+              required>
+            <button type="button" id="show_hide"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-white/60 hover:text-white transition uppercase tracking-tighter">
+              <i id="eye-icon" class="fa-regular fa-eye text-lg cursor-pointer"></i>
+            </button>
+          </div>
+        </div>
+
+      </fieldset>
+
+      <!--Login Button-->
+      <button type="submit"
+        class="w-full bg-white text-[#397367] font-bold py-3 rounded-xl hover:bg-opacity-90 transform transition active:scale-[0.98] shadow-lg mt-6 cursor-pointer">
+        Login
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="bg-black/10 py-4 text-center border-t border-white/10">
+      <a href="{% url 'registrationPage' %}"
+        class="text-sm text-white/70 hover:text-white transition underline-offset-4 hover:underline">
+        New user? <span class="font-bold text-white">Create an account</span>
+      </a>
+    </div>
+  </div>
+
+  <script> <!--Password show/hide script-->
+    const togglePasswordButton = document.getElementById("show_hide");
+    const passwordSection = document.getElementById("password");
+    const eyeIcon = document.getElementById("eye-icon");
+
+    togglePasswordButton.addEventListener("click", function () {
+      const isPassword = passwordSection.getAttribute("type") === "password";
+
+      passwordSection.setAttribute("type", isPassword ? "text" : "password");
+
+      if (isPassword) {
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    });
+  </script>
+
+  <script> <!--Automatic toast close script-->
+    function dismissMessage(element) {
+      if (!element || element.classList.contains('toast-pop-out')) return;
+
+      element.classList.add('toast-pop-out');
+
+      // Remove from DOM after animation completes
+      setTimeout(() => {
+        if (element && element.parentNode) {
+          element.remove();
+        }
+      }, 500);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const messages = document.querySelectorAll('.django-message');
+
+      messages.forEach((msg) => {
+        // Strict 8-second auto-dismissal
+        setTimeout(() => {
+          if (document.body.contains(msg)) {
+            dismissMessage(msg);
+          }
+        }, 8000);
+      });
+    });
+  </script>
+</body>
+
+</html>

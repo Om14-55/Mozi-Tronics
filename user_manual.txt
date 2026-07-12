@@ -1,0 +1,37 @@
+There are already some users registered:
+ 1. user: priyangshu
+    password: priyangshu
+
+2. user: rohit
+   password: rohit
+
+3. user: safakat
+   password: safakat
+
+4. user: admin
+   password: admin
+
+You can use any of them to log in. All the users mentioned above are set up with predefined client code but admin. If you log in with the admin details, you can see all the available client details present in the database.
+
+To access the web-app:
+Type the IP which the web-app is hosted on. If you are not logged in, it will automatically redirect you to the login page. 
+
+If you are logged in, it will automatically redirect to http://{hosted-ip}/dashboard/
+
+If you want to register a new user, click on "New user? Create an account". It will redirect you to http://{hosted-ip}/registration/
+
+Fill the details to register.
+
+After logging in: 
+Select client code from the Client Code dropdown.
+After selecting the client code, select factory code from the Factory Code dropdown.
+After selecting factory code from the dropdown, select line number from the Line Number dropdown.
+
+Data will show based on the selected client code, factory code and line number.
+
+To log out, click on the log out button.
+
+
+
+
+

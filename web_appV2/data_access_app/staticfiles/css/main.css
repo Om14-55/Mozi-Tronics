@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+
+@source "../../templates/**/*.html";
+
+@import './dashboard.css';
+
+@theme {
+    --color-brand: #397367;
+    --breakpoint-xs: 489px;
+}

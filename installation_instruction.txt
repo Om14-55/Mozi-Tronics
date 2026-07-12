@@ -1,0 +1,63 @@
+﻿1. Go inside the final_sql_webapp_dump_final directory.
+
+2. Give executable permission to the django_setup.sh script :
+    sudo chmod +x django_setup.sh
+
+3. Run the script (with superuser permission) :
+    sudo ./django_setup.sh
+
+4. Enter the details of ubuntu, database and ip when prompted.
+
+
+**************************************************************************************
+
+Some error solution if encountered :
+
+1> Nginx error : 502 gateway
+   After the installation of the whole script, you may see 502 nginx error code when you visit the website.
+   If you see this error, follow these steps--->
+
+    i> Go to ~/web_appV2
+
+    ii> Activate the virtual environment.
+    
+    iii> Run this command :
+          gunicorn data_access_app.wsgi:application --bind unix:/{ your final_sql_webapp_dump_final directory }/web_appV2/data_access_app/gunicorn.sock 
+
+    iv> Restart the gunicorn service :
+         sudo systemctl restart gunicorn
+
+======================================================
+
+2> Can not reach pip server
+   While running the script, not able to reach pip can occur. I implemented multiple mirror servers. But inspite of those if nothing works, there might be an issue in your 50-cloud-init.yaml file.
+   Follow these steps to solve--->
+
+    i> Edit the /etc/netplan/50-cloud-init.yaml file :
+       
+        network:
+          version: 2
+          ethernets:
+            enp0s3:
+              dhcp4: true
+              mtu: 1400 # added this line
+            enp0s8:
+              dhcp4: false
+              addresses:
+                - 192.168.56.50/24
+              routes:
+                - to: default
+                 via: 192.168.56.1
+            enp0s9:
+              dhcp4: true
+
+    ii> Disable cloud-init overwriting on reboot :
+         sudo bash -c 'echo "network: {config: disabled}" > /etc/cloud/cloud.cfg.d/99-disable-network.cfg
+
+    iii> Apply the netplan changes :
+          sudo netplan apply
+
+    iv> Verify the MTU changes :
+         ip link show enp0s3
+        
+            

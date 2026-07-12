@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <title>Register</title>
+</head>
+
+<body class="flex min-h-screen flex-col items-center justify-center bg-[#2A2D2F] p-6">
+  <div class="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-[#397367] shadow-2xl">
+
+    <div class="px-8 pt-8 pb-6 text-center">
+      <h3 class="text-3xl font-bold tracking-tight text-white">Create account</h3>
+      <p class="mt-2 text-sm text-white/70">Hey new user! Create an account here</p>
+    </div>
+
+    <!--Messages Section-->
+    <div id="messages-list" class="fixed top-6 right-6 z-50 flex flex-col items-end gap-3 pointer-events-none">
+      {% if messages %} {% for message in messages %}
+      <div class="django-message pointer-events-auto relative overflow-hidden flex items-center justify-between px-4 py-4 rounded-xl shadow-2xl text-white text-sm font-semibold border border-white/10 transition-all 
+      {% if message.tags == 'error' %} bg-[#f3505e] {% else %} bg-[#66bd7b] {% endif %}" role="alert">
+
+        <div class="flex items-center gap-3 pr-4">
+          {% if message.tags == 'error' %}
+          <i class="fa-solid fa-circle-exclamation text-lg"></i>
+          {% else %}
+          <i class="fa-solid fa-circle-check text-lg"></i>
+          {% endif %}
+          <span>{{ message }}</span>
+        </div>
+
+        <!-- Optional: Simple X to close (Manual) -->
+        <button onclick="dismissMessage(this.closest('.django-message'))"
+          class="shrink-0 p-1 hover:bg-black/10 rounded-full transition">
+          <i class="fa-solid fa-xmark text-lg cursor-pointer"></i>
+        </button>
+
+        <!-- Progress Bar -->
+        <div class="absolute bottom-0 left-0 h-1 bg-white/30 animate-progress"></div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    <form action="/api/v1/registeruser/" method="POST" class="space-y-4 px-8 pb-8">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 gap-4">
+        <!--Username-->
+        <div>
+          <label for="username_register"
+            class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Username</label>
+          <input type="text" id="username_register" name="username_register"
+            class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner"
+            required>
+        </div>
+
+        <!--Email-->
+        <div>
+          <label for="email_register"
+            class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">E-mail</label>
+          <input type="email" id="email_register" name="email_register"
+            class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner"
+            required>
+        </div>
+
+        <!-- Phone & Gender Row -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="phone_number"
+              class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Phone</label>
+            <input type="tel" id="phone_number" name="phone_number"
+              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner"
+              required>
+          </div>
+          <div>
+            <label for="gender"
+              class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Gender</label>
+            <select id="gender" name="gender"
+              class="w-full px-4 py-2.5 bg-[#397367] border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner"
+              required>
+              <option value="" disabled selected>Select</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Client code, Factory code, User role dropdown section -->
+        <div class="grid grid-cols-1 gap-4">
+
+          <!-- Client -->
+          <div>
+            <label for="client_code" class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+              Client Code
+            </label>
+            <select id="client_code" name="client_code"
+              class="w-full px-4 py-2.5 bg-[#397367] border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner">
+              <option value="" disabled selected>Select</option>
+              {% for client in clients %}
+              <option value="{{ client.0 }}">{{ client.0 }} - {{ client.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <!-- Role -->
+          <div>
+            <label for="user_role" class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">
+              Role
+            </label>
+            <select id="user_role" name="user_role"
+              class="w-full px-4 py-2.5 bg-[#397367] border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner">
+              <option value="" disabled selected>Select</option>
+              {% for role in roles %}
+              <option value="{{ role.0 }}">{{ role.0 }} - {{ role.1 }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+        </div>
+
+        <!--Password-->
+        <div>
+          <label for="password1"
+            class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Password</label>
+          <div class="relative">
+            <input type="password" id="password1" name="password1"
+              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner"
+              required>
+            <button type="button" id="show_hide"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition">
+              <i id="eye-icon" class="fa-regular fa-eye text-lg cursor-pointer"></i>
+            </button>
+          </div>
+        </div>
+
+        <!--Confirm Password-->
+        <div>
+          <label for="password2" class="block text-xs font-semibold text-white/80 uppercase tracking-wider mb-2">Confirm
+            Password</label>
+          <input type="password" id="password2" name="password2"
+            class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 transition shadow-inner"
+            required>
+        </div>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-white text-[#397367] font-bold py-3 rounded-xl hover:bg-opacity-90 transform transition active:scale-[0.98] shadow-lg mt-4 cursor-pointer">
+        Register
+      </button>
+    </form>
+
+    <div class="bg-black/10 py-4 text-center border-t border-white/10">
+      <a href="{% url 'loginPage' %}"
+        class="text-sm text-white/70 hover:text-white transition underline-offset-4 hover:underline">
+        Already have an account? <span class="font-bold text-white">Login here</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const togglePasswordButton = document.getElementById("show_hide");
+    const passwordField = document.getElementById("password1");
+    const eyeIcon = document.getElementById("eye-icon");
+
+    togglePasswordButton.addEventListener("click", function () {
+      const isPassword = passwordField.type === "password";
+      passwordField.type = isPassword ? "text" : "password";
+
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+  </script>
+
+  <script> <!--Automatic toast close script-->
+    function dismissMessage(element) {
+      if (!element || element.classList.contains('toast-pop-out')) return;
+
+      element.classList.add('toast-pop-out');
+
+      // Remove from DOM after animation completes
+      setTimeout(() => {
+        if (element && element.parentNode) {
+          element.remove();
+        }
+      }, 500);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const messages = document.querySelectorAll('.django-message');
+
+      messages.forEach((msg) => {
+        // Strict 8-second auto-dismissal
+        setTimeout(() => {
+          if (document.body.contains(msg)) {
+            dismissMessage(msg);
+          }
+        }, 8000);
+      });
+    });
+  </script>
+</body>
+
+</html>

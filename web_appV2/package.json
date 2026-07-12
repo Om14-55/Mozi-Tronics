@@ -1,0 +1,21 @@
+{
+  "name": "djangotailwind",
+  "version": "1.0.0",
+  "description": "this is django tailwind",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "npx @tailwindcss/cli -i data_access_app/static/css/main.css -o data_access_app/static/css/tailwind.css --minify --watch",
+    "build": "npx @tailwindcss/cli -i data_access_app/static/css/main.css -o data_access_app/static/css/tailwind.css --minify"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.3.0"
+  }
+}
